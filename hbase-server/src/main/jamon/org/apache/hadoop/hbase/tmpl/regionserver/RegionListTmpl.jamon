@@ -69,17 +69,22 @@
             </div>
         </div>
     </div>
-    <p>Region names are made of the containing table's name, a comma,
-    the start key, a comma, and a randomly generated region id.  To illustrate,
-    the region named
-    <em>domains,apache.org,5464829424211263407</em> is party to the table
-    <em>domains</em>, has an id of <em>5464829424211263407</em> and the first key
-    in the region is <em>apache.org</em>.  The <em>hbase:meta</em> 'table' is an internal
+    <p>Region names contain (separated by commas) the full table name (including the namespace),
+    the start key, the time the region was created, and finally a dot with an MD5 hash of everything
+    before the dot. For example: <em>test,,1499410125885.1544f69aeaf787755caa11d3567a9621.</em> The
+    trailing dot is to distinguish legacy region names (like those used by the hbase:meta table)
+    The start key is printed in safe characters, escaping unprintable characters.
+    The MD5 hash is used as the directory name within the HBase storage directories.
+    The <em>hbase:meta</em> 'table' is an internal
     system table (or a 'catalog' table in db-speak).
     The hbase:meta table keeps a list of all regions in the system. The empty key is used to denote
     table start and table end.  A region with an empty start key is the first region in a table.
     If a region has both an empty start key and an empty end key, it's the only region in the
-    table. See <a href="http://hbase.apache.org">HBase Home</a> for further explication.<p>
+    table. The names for the meta table use a Jenkins hash instead, also leaving out the trailing
+    dot, for example <em>hbase:meta,,1.1588230740</em> . The time is always set to 1.
+    For region replicas, the replica ID is inserted into the name, for example
+    <em>replicatable,,1486289678486_0001.3e8b7655299b21b3038ff8d39062467f.</em>, see the _0001 part.
+    </p>
 <%else>
     <p>Not serving regions</p>
 </%if>
